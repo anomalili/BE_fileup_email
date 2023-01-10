@@ -56,10 +56,13 @@ Route::middleware(['auth.basic'])->group(function () {
     Route::patch('/api/users/password/{id}', [UserController::class, 'updatePassword']);
     //queries
     //user lendings
+    Route::patch('/api/bring_back/{copy_id}/{start}', [LendingController::class, 'bringBack']);
+
     Route::get('/api/user_lendings', [LendingController::class, 'userLendingsList']);
     Route::get('/api/user_lendings_count', [LendingController::class, 'userLendingsCount']);
 });
 //csak a tesztelés miatt van "kint"
+
 Route::patch('/api/users/password/{id}', [UserController::class, 'updatePassword']);
 Route::apiResource('/api/copies', CopyController::class);
 Route::get('/api/lendings', [LendingController::class, 'index']); 

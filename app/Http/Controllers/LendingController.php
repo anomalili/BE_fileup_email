@@ -7,23 +7,25 @@ use App\Models\Lending;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class LendingController extends Controller
 {
     //
-    public function index(){
+    public function index()
+    {
         $lendings =  Lending::all();
         return $lendings;
     }
 
-    public function show ($user_id, $copy_id, $start)
+    public static function show($user_id, $copy_id, $start)
     {
         $lending = Lending::where('user_id', $user_id)->where('copy_id', $copy_id)->where('start', $start)->get();
         return $lending[0];
     }
     public function destroy($user_id, $copy_id, $start)
     {
-        LendingController::show($user_id, $copy_id, $start)->delete();
+        Lending::show($user_id, $copy_id, $start)->delete();
     }
 
     public function store(Request $request)
@@ -46,15 +48,15 @@ class LendingController extends Controller
 
     public function userLendingsList()
     {
-        $user = Auth::user();	//bejelentkezett felhasználó
-        $lendings = Lending::with('user_c')->where('user_id','=', $user->id)->get();
+        $user = Auth::user();    //bejelentkezett felhasználók
+        $lendings = Lending::with('user_c')->where('user_id', '=', $user->id)->get();
         return $lendings;
     }
 
     public function userLendingsCount()
     {
-        $user = Auth::user();	//bejelentkezett felhasználó
-        $lendings = Lending::with('user_c')->where('user_id','=', $user->id)->distinct('copy_id')->count();
+        $user = Auth::user();    //bejelentkezett felhasználó
+        $lendings = Lending::with('user_c')->where('user_id', '=', $user->id)->distinct('copy_id')->count();
         return $lendings;
     }
 
@@ -65,5 +67,17 @@ class LendingController extends Controller
         $users = User::all();
         $copies = Copy::all();
         return view('lending.new', ['users' => $users, 'copies' => $copies]);
+    }
+
+    public function bringBack($copy_id, $start)
+    {
+        $user = Auth::user();
+        $lending = LendingController::show($user->id, $copy_id, $start);
+        $lending->end = date(now());
+        $lending->save();
+    /*     DB::table('copies')
+            ->where('copy_id', $copy_id)
+            ->update(['status' => 0]); */
+        DB::select('CALL toStore(?)', array($copy_id));
     }
 }

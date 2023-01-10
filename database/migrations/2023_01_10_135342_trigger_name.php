@@ -13,10 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tabla_neve_nagy_betuvel_ekezet_nelkul_egyes_szamban_peldaul_tasks', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        //
     }
 
     /**
@@ -26,6 +23,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tabla_neve_nagy_betuvel_ekezet_nelkul_egyes_szamban_peldaul_tasks');
+        //
     }
 };
